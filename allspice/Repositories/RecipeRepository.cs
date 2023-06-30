@@ -18,11 +18,11 @@ namespace allspice.Repositories
             (@title, @instructions, @img, @category, @creatorId);
 
             SELECT
-            r.*,
-            c.*
-            FROM recipes r
-            JOIN accounts c ON r.creatorId = c.id
-            WHERE r.id = LAST_INSERT_ID();
+            rec.*,
+            ctr.*
+            FROM recipes rec
+            JOIN accounts ctr ON rec.creatorId = ctr.id
+            WHERE rec.id = LAST_INSERT_ID();
             ";
 
             Recipe recipe = _db.Query<Recipe, Account, Recipe>(sql, (recipe, creator) =>{
@@ -60,10 +60,10 @@ namespace allspice.Repositories
         {
             string sql = @"
             SELECT
-            r.*,
-            c.*
-            FROM recipes r
-            JOIN accounts c ON r.creatorId = c.id;";
+            rec.*,
+            ctr.*
+            FROM recipes rec
+            JOIN accounts ctr ON rec.creatorId = ctr.id;";
             List<Recipe> recipes = _db.Query<Recipe, Account, Recipe>(sql,(recipe, creator) =>
             {
                 recipe.Creator = creator;
@@ -76,16 +76,16 @@ namespace allspice.Repositories
         {
             string sql = @"
             SELECT
-            r.*,
-            c.*
+            rec.*,
+            ctr.*
             FROM
-            recipes r
-            JOIN accounts c ON r.creatorId = c.id
+            recipes rec
+            JOIN accounts ctr ON rec.creatorId = ctr.id
             WHERE
-            r.id = @recipeId;";
-            Recipe recipe = _db.Query<Recipe, Account, Recipe>(sql, (r,c) =>{
-                r.Creator = c;
-                return r;
+            rec.id = @recipeId;";
+            Recipe recipe = _db.Query<Recipe, Account, Recipe>(sql, (rec,ctr) =>{
+                rec.Creator = ctr;
+                return rec;
             }, new { recipeId }).FirstOrDefault();
             return recipe;
         }

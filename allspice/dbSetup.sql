@@ -20,6 +20,28 @@ recipes(
   FOREIGN KEY (creatorId) REFERENCES accounts(id) ON DELETE CASCADE
 ) default charset utf8 COMMENT '';
 
+CREATE TABLE
+ingredients(
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Time Created',
+  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last Update',
+  name VARCHAR(255) NOT NULL DEFAULT "Forgot set a name.",
+  quantity VARCHAR(255) NOT NULL DEFAULT "1",
+  recipeId INT NOT NULL,
+  FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE CASCADE
+) default charset utf8 COMMENT '';
+
+CREATE TABLE
+favoriteRecipes(
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Time Created',
+  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last Update',
+  accountId VARCHAR(255) NOT NULL,
+  recipeId INT NOT NULL,
+  FOREIGN KEY (accountId) REFERENCES accounts(id) ON DELETE CASCADE,
+  FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE CASCADE
+) default charset utf8 COMMENT '';
+
 INSERT INTO
     recipes(
         title,
@@ -37,3 +59,22 @@ VALUES (
     );
 
   SELECT * FROM recipes JOIN accounts ON creatorId;
+
+  SELECT
+  fav.*,
+  rec.*,
+  act.*
+  FROM favoriteRecipes fav
+  JOIN recipes rec ON fav.recipeId = rec.id
+  JOIN accounts act ON fav.accountId = act.id
+  WHERE fav.accountId = "646d28b8f893d37fb764429b"
+  ;
+
+  SELECT
+  fav.*,
+  rec.*,
+  act.*
+  FROM favoriteRecipes fav
+  JOIN recipes rec ON fav.recipeId = rec.id
+  JOIN accounts act ON fav.accountId = act.id
+  WHERE fav.id = 1;
