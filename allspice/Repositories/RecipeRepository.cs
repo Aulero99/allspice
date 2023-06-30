@@ -32,6 +32,30 @@ namespace allspice.Repositories
             return recipe;
         }
 
+        internal int DeleteRecipe(int recipeId)
+        {
+            string sql = @"
+            DELETE FROM recipes
+            WHERE id = @recipeId
+            LIMIT 1
+            ;";
+            int rows = _db.Execute(sql, new { recipeId });
+            return rows;
+        }
+
+        internal void EditRecipe(Recipe repoRecipe)
+        {
+            string sql = @" 
+            UPDATE recipes SET
+            title = @title,
+            instructions = @instructions,
+            img = @img,
+            category = @category
+            WHERE  id = @id;";
+
+            _db.Execute(sql, repoRecipe);
+        }
+
         internal List<Recipe> GetAllRecipes()
         {
             string sql = @"
@@ -46,6 +70,24 @@ namespace allspice.Repositories
                 return recipe;
             }).ToList();
             return recipes;
+        }
+
+        internal Recipe GetRecipeById(int recipeId)
+        {
+            string sql = @"
+            SELECT
+            r.*,
+            c.*
+            FROM
+            recipes r
+            JOIN accounts c ON r.creatorId = c.id
+            WHERE
+            r.id = @recipeId;";
+            Recipe recipe = _db.Query<Recipe, Account, Recipe>(sql, (r,c) =>{
+                r.Creator = c;
+                return r;
+            }, new { recipeId }).FirstOrDefault();
+            return recipe;
         }
     }
 }
